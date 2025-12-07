@@ -1,277 +1,342 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Product</title>
-  <style>
-    :root{
-      --bg: #f5f6f8;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --accent:#0f6ef4;
-      --accent-2:#f97316;
-      --radius:12px;
-      --shadow: 0 6px 18px rgba(20,20,40,0.08);
-      --glass: rgba(255,255,255,0.6);
-    }
-    body.v2 { --bg:#0b1220; --card:#0f1724; --muted:#9ca3af; --accent:#06b6d4; --accent-2:#fb7185; color:#e6eef8; --glass: rgba(255,255,255,0.04); }
-    *{box-sizing:border-box}
-    body{
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      margin:0; background:var(--bg); color: #0b1220; -webkit-font-smoothing:antialiased;
-      padding:28px;
-    }
-    body.v2 { color: #e6eef8 }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMD Clothing - Formal Trousers</title>
+<style>
+:root {
+    --bg-color: #ffffff;
+    --text-color: #1e293b;
+    --card-bg: #f1f5f9;
+    --border-color: #e2e8f0;
+    --title-gradient: linear-gradient(135deg, #1e293b, #475569);
+}
 
-    .container{
-      max-width:1100px; margin:0 auto; display:grid; grid-template-columns: 1fr 420px; gap:28px;
-    }
+.dark {
+    --bg-color: #0f172a;
+    --text-color: #e2e8f0;
+    --card-bg: #1e293b;
+    --border-color: #334155;
+    --title-gradient: linear-gradient(135deg, #f8fafc, #cbd5e1);
+}
 
-    .card{
-      background:var(--card); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);
-    }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: all 0.4s ease;
+}
 
-    .topbar{ display:flex; justify-content:space-between; gap:12px; margin-bottom:14px; align-items:center; }
-    .variant-toggle{ display:flex; gap:8px; align-items:center;}
-    .variant-toggle button{ background:transparent; border:1px solid rgba(0,0,0,0.06); padding:8px 12px; border-radius:10px; cursor:pointer; }
-    body.v2 .variant-toggle button{ border-color: rgba(255,255,255,0.06) }
+/* Header */
+header {
+    position: fixed; top:0; width:100%;
+    background: var(--bg-color);
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+    z-index:1000;
+}
+.header-content {
+    max-width:1200px; margin:auto;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:1rem 2rem;
+}
+.logo {
+    font-size:1.6rem; font-weight:bold;
+    background:var(--title-gradient);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+.theme-toggle {
+    padding:0.6rem;
+    border-radius:50%; border:2px solid var(--border-color);
+    cursor:pointer; background:none;
+    font-size:1.2rem;
+    transition:0.3s;
+}
+.theme-toggle:hover {
+    transform:scale(1.1);
+}
 
-    .counters{ display:flex; gap:10px; align-items:center; }
-    .counter{ background:var(--glass); padding:8px 10px; border-radius:10px; font-weight:600; font-size:14px; color:var(--muted) }
-    body.v2 .counter{ color:var(--muted) }
+/* Layout */
+.container {
+    max-width:1200px; margin:auto;
+    padding:7rem 2rem 4rem;
+}
+.product-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
 
-    .gallery { display:grid; grid-template-columns:200px 1fr; gap:16px; align-items:start; }
-    .thumbs{ display:flex; flex-direction:column; gap:10px; }
-    .thumbs img{ width:64px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:transform .15s, border-color .15s; }
-    .thumbs img.active{ border-color:var(--accent); transform:scale(1.03) }
-    .main-img{ border-radius:10px; overflow:hidden; box-shadow: 0 8px 20px rgba(15,20,30,0.08); }
-    .main-img img{ width:100%; height:100%; object-fit:cover; display:block; max-height:420px }
+/* Images */
+.main-image-container {
+    position:relative; border-radius:1rem;
+    overflow:hidden; background:var(--card-bg);
+    aspect-ratio:1; margin-bottom:1rem;
+}
+.main-image {
+    width:100%; height:100%;
+    object-fit:cover; transition:0.6s;
+}
+.main-image-container:hover .main-image { transform:scale(1.05); }
 
-    .details h1{ margin:0 0 8px 0; font-size:22px }
-    .price-row{ display:flex; gap:12px; align-items:center; margin:10px 0; }
-    .price{ font-size:20px; font-weight:700; color:var(--accent) }
-    .old-price{ text-decoration:line-through; color:var(--muted); font-weight:600; }
-    .actions{ display:flex; gap:12px; margin-top:12px; }
-    .btn{ padding:12px 16px; border-radius:12px; border:0; cursor:pointer; font-weight:700; }
-    .btn.primary{ background:linear-gradient(90deg,var(--accent), var(--accent-2)); color:white; box-shadow:0 8px 18px rgba(15,110,244,0.14) }
-    .btn.ghost{ background:transparent; border:1px solid rgba(0,0,0,0.07); color:var(--muted) }
-    body.v2 .btn.ghost{ border-color: rgba(255,255,255,0.06); color:var(--muted) }
+.nav-btn {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:45px; height:45px;
+    border-radius:50%; font-size:1.4rem;
+    border:none; opacity:0; cursor:pointer;
+    transition:0.3s; background:var(--bg-color);
+}
+.main-image-container:hover .nav-btn { opacity:0.9; }
+.nav-btn.prev { left:0.8rem; }
+.nav-btn.next { right:0.8rem; }
 
-    .meta{ display:flex; gap:12px; margin-top:14px; color:var(--muted); font-size:14px; align-items:center }
-    .badge{ background:rgba(15,110,244,0.08); color:var(--accent); padding:6px 8px; border-radius:8px; font-weight:700 }
-    body.v2 .badge{ background: rgba(6,182,212,0.08) }
+.thumbnails { display:grid; grid-template-columns:repeat(5,1fr); gap:0.5rem; }
+.thumbnail {
+    border-radius:0.5rem; overflow:hidden;
+    cursor:pointer; opacity:0.6;
+    border:2px solid transparent;
+    transition:0.3s;
+}
+.thumbnail.active {
+    opacity:1; border-color:#0ea5e9;
+    transform:scale(1.06);
+}
+.thumbnail img { width:100%; height:100%; object-fit:cover; }
 
-    .reviews{ margin-top:18px; display:flex; gap:18px; flex-wrap:wrap; }
-    .stars{ color:goldenrod; font-weight:700 }
-    .review-list{ margin-top:10px; display:grid; gap:10px }
-    .review{ background:linear-gradient(180deg, rgba(0,0,0,0.01), transparent); padding:10px; border-radius:10px; color:var(--muted) }
+/* Details */
+.product-title { font-size:2.2rem; font-weight:700; margin-bottom:0.4rem; }
+.product-subtitle { color:#94a3b8; margin-bottom:1.4rem; }
 
-    .social-proof{ position:fixed; right:20px; bottom:20px; background:var(--card); padding:12px 14px; border-radius:12px; box-shadow:var(--shadow); display:flex; gap:12px; align-items:center; opacity:0; transform:translateY(12px); transition:all .35s; z-index:60 }
-    .social-proof.show{ opacity:1; transform:translateY(0) }
-    .social-proof img{ width:42px; height:42px; border-radius:8px; object-fit:cover }
-    .social-proof .txt{ font-size:13px; color:var(--muted) }
+.current-price { font-size:2.3rem; font-weight:700; }
+.original-price {
+    font-size:1.3rem; text-decoration:line-through; color:#94a3b8;
+}
+.discount-badge {
+    padding:0.35rem 0.7rem; background:#dcfce7;
+    border-radius:2rem; font-size:0.9rem; color:#16a34a;
+}
 
-    @media (max-width:980px){
-      .container{ grid-template-columns: 1fr; }
-      .gallery{ grid-template-columns: 1fr; }
-      .thumbs{ flex-direction:row; order:2; overflow:auto }
-      .thumbs img{ width:54px; height:54px }
-    }
-    body.v2 .card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) }
-    .variant-indicator{ font-size:12px; color:var(--muted) }
-  </style>
+/* Sizes */
+.size-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0.6rem; }
+.size-btn {
+    padding:0.8rem;
+    border:2px solid var(--border-color);
+    border-radius:0.5rem;
+    background:transparent;
+    cursor:pointer; font-weight:600;
+    transition:0.3s;
+}
+.size-btn.active {
+    background:#0284c7; color:white;
+    border-color:#0284c7;
+}
+.size-btn:hover { transform:scale(1.1); }
+
+/* Quantity */
+.quantity-controls {
+    display:flex; gap:1rem; align-items:center; margin:1.6rem 0;
+}
+.qty-btn {
+    width:40px; height:40px;
+    border:2px solid var(--border-color);
+    background:transparent;
+    font-size:1.3rem; cursor:pointer;
+    border-radius:0.5rem; font-weight:bold;
+}
+.quantity-display { font-size:1.3rem; font-weight:700; }
+
+/* Add to cart */
+.add-to-cart {
+    width:100%; padding:1rem;
+    background:#0ea5e9; border:none;
+    color:white; border-radius:0.7rem;
+    font-size:1rem; font-weight:700;
+    cursor:pointer; transition:0.3s;
+}
+.add-to-cart:hover { background:#0369a1; transform:scale(1.02); }
+
+/* Tabs */
+.tabs-header { display:flex; gap:2rem; border-bottom:1px solid var(--border-color); }
+.tab-btn {
+    background:none; border:none; padding:1rem 0;
+    cursor:pointer; font-weight:600; font-size:1rem;
+    color:#94a3b8; position:relative;
+}
+.tab-btn.active { color:var(--text-color); }
+.tab-btn.active::after {
+    content:''; position:absolute; left:0; right:0; bottom:-2px;
+    height:2px; background:#0ea5e9;
+}
+.tab-content { display:none; padding-top:1rem; }
+.tab-content.active { display:block; }
+
+.features-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+/* Responsive */
+@media (max-width:768px) {
+    .product-grid { grid-template-columns:1fr; }
+    .size-grid { grid-template-columns:repeat(3,1fr); }
+}
+</style>
 </head>
+
 <body>
-  <div class="topbar">
-    <div class="variant-toggle card" style="display:flex;align-items:center;padding:8px 12px;">
-      <div style="margin-right:12px;font-weight:700">Design Variation</div>
-      <button id="v1Btn">Variation 1</button>
-      <button id="v2Btn">Variation 2</button>
-      <div style="width:10px"></div>
-      <div class="variant-indicator">Toggle to see alternate layout/colors</div>
+<header>
+    <div class="header-content">
+        <div class="logo">DMD CLOTHING</div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="product-grid">
+
+        <!-- Left Image Section -->
+        <div>
+            <div class="main-image-container">
+                <img id="mainImage" class="main-image" src="" />
+                <button class="nav-btn prev" onclick="prevImage()">‹</button>
+                <button class="nav-btn next" onclick="nextImage()">›</button>
+            </div>
+            <div class="thumbnails" id="thumbnails"></div>
+        </div>
+
+        <!-- Right Detail Section -->
+        <div>
+            <h1 class="product-title">Premium Lycra Stretch Formal Trouser</h1>
+            <p class="product-subtitle">Slim Fit | Office Wear | Deep Charcoal</p>
+
+            <div class="price-section">
+                <span class="current-price">₹1,199</span>
+                <span class="original-price">₹2,499</span>
+                <span class="discount-badge">52% OFF</span>
+            </div>
+
+            <label class="section-label">Select Size</label>
+            <div class="size-grid" id="sizeGrid"></div>
+
+            <label class="section-label">Quantity</label>
+            <div class="quantity-controls">
+                <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                <span class="quantity-display" id="qtyText">1</span>
+                <button class="qty-btn" onclick="updateQty(1)">+</button>
+            </div>
+
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+
     </div>
 
-    <div class="counters">
-      <div class="counter card">Live views: <span id="views">1,024</span></div>
-      <div class="counter card">Sold: <span id="sold">12</span></div>
+    <!-- Tabs -->
+    <div class="tabs-section" style="margin-top:3rem;">
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchTab(0)">Features</button>
+            <button class="tab-btn" onclick="switchTab(1)">Description</button>
+            <button class="tab-btn" onclick="switchTab(2)">Size Chart</button>
+        </div>
+
+        <div class="tab-content active">
+            <div class="features-grid">
+                <div>✓ Wrinkle-free material</div>
+                <div>✓ 4-way stretch</div>
+                <div>✓ Ideal for office wear</div>
+                <div>✓ Premium fabric quality</div>
+                <div>✓ Modern slim fit cut</div>
+                <div>✓ Deep rich colour</div>
+            </div>
+        </div>
+
+        <div class="tab-content">
+            <p>Our trousers are made using premium Lycra blend fabric that ensures comfort all day long.</p>
+        </div>
+
+        <div class="tab-content">
+            <p>Standard trouser size chart will come here.</p>
+        </div>
     </div>
-  </div>
 
-  <main class="container">
-    <section class="card">
-      <div class="gallery">
-        <div class="thumbs" id="thumbs">
-          <img data-full="https://picsum.photos/id/1011/800/800" src="https://picsum.photos/id/1011/200/200" class="active" alt="thumb1">
-          <img data-full="https://picsum.photos/id/1005/800/800" src="https://picsum.photos/id/1005/200/200" alt="thumb2">
-          <img data-full="https://picsum.photos/id/1044/800/800" src="https://picsum.photos/id/1044/200/200" alt="thumb3">
-          <img data-full="https://picsum.photos/id/1033/800/800" src="https://picsum.photos/id/1033/200/200" alt="thumb4">
-        </div>
+</div>
 
-        <div>
-          <div class="main-img">
-            <img id="mainImage" src="https://picsum.photos/id/1011/800/800" alt="Product main">
-          </div>
+<script>
+let images = [
+    "https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=900",
+    "https://images.unsplash.com/photo-1582417728572-266d8f17b9a1?w=900",
+    "https://images.unsplash.com/photo-1594938291221-94f18cbb5660?w=900",
+    "https://images.unsplash.com/photo-1578934750109-c5b1b1f1c800?w=900",
+    "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=900"
+];
 
-          <div class="details" style="margin-top:12px;">
-            <h1 id="title">DMD Clothing — Lycra Cotton Stretchable Formal Trouser (Charcoal Black)</h1>
-            <div class="price-row">
-              <div class="price">₹799</div>
-              <div class="old-price">₹1,299</div>
-              <div style="color:var(--muted);font-weight:600">| Free delivery</div>
-            </div>
+let sizes = ["28","30","32","34","36","38","40"];
+let currentImage = 0;
+let qty = 1;
 
-            <div class="meta">
-              <div class="badge">Best Seller</div>
-              <div>Sizes: <strong>M, L, XL</strong></div>
-              <div>Return: 7 days</div>
-            </div>
+// Init
+window.onload = function() {
+    loadImages();
+    loadSizes();
+    setThemeFromLocal();
+};
 
-            <div class="actions">
-              <button id="addCart" class="btn primary">Add to Cart</button>
-              <button id="buyNow" class="btn ghost">Buy Now</button>
-            </div>
-
-            <div class="reviews">
-              <div>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <div class="stars" id="avgStars">★★★★☆</div>
-                  <div style="font-weight:700">4.2</div>
-                  <div style="color:var(--muted)"> (238 reviews)</div>
-                </div>
-
-                <div class="review-list" id="reviews">
-                  <div class="review"><strong>Ramesh</strong> — Comfortable fit, good stretch.</div>
-                  <div class="review"><strong>Sneha</strong> — Color same as shown, fabric quality okay.</div>
-                </div>
-              </div>
-
-              <div style="margin-left:auto;color:var(--muted);font-size:13px">
-                <div style="font-weight:700;margin-bottom:6px">Share</div>
-                <div style="display:flex;gap:8px">
-                  <button class="btn ghost">Whatsapp</button>
-                  <button class="btn ghost">X</button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <aside class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:13px;color:var(--muted)">Seller</div>
-          <div style="font-weight:800">DMD Clothing Pvt. Ltd.</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:12px;color:var(--muted)">Dispatch in</div>
-          <div style="font-weight:700">2 days</div>
-        </div>
-      </div>
-
-      <hr style="margin:12px 0;border:none;border-top:1px solid rgba(0,0,0,0.06)">
-
-      <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-        <div><strong>Size</strong></div>
-        <div style="color:var(--muted)">Select</div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-        <button class="btn ghost size-btn">S</button>
-        <button class="btn ghost size-btn">M</button>
-        <button class="btn ghost size-btn">L</button>
-        <button class="btn ghost size-btn">XL</button>
-      </div>
-
-      <hr style="margin:12px 0;border:none;border-top:1px solid rgba(0,0,0,0.06)">
-
-      <div style="font-weight:700;margin-bottom:8px">Product highlights</div>
-      <ul style="color:var(--muted);line-height:1.6">
-        <li>Stretchable lycra blend</li>
-        <li>Regular fit — office wear</li>
-        <li>Machine washable</li>
-      </ul>
-
-      <div style="margin-top:12px">
-        <div style="font-weight:700;margin-bottom:8px">Customers also bought</div>
-        <div style="display:flex;gap:10px">
-          <img src="https://picsum.photos/id/1027/80/80" style="width:80px;height:80px;border-radius:8px;object-fit:cover">
-          <img src="https://picsum.photos/id/1035/80/80" style="width:80px;height:80px;border-radius:8px;object-fit:cover">
-          <img src="https://picsum.photos/id/1062/80/80" style="width:80px;height:80px;border-radius:8px;object-fit:cover">
-        </div>
-      </div>
-
-      <div style="margin-top:12px;font-size:13px;color:var(--muted)">
-        <div style="font-weight:700">Return & Warranty</div>
-        7 days return | 3 months stitching warranty
-      </div>
-    </aside>
-  </main>
-
-  <div class="social-proof" id="social">
-    <img src="https://picsum.photos/id/1012/80/80" alt="user">
-    <div class="txt"><strong id="spname">Aman</strong> just purchased this — <span id="sptime">2 min</span> ago</div>
-  </div>
-
-  <script>
-    const thumbs = document.getElementById('thumbs');
-    const mainImage = document.getElementById('mainImage');
-    thumbs.addEventListener('click', e=>{
-      const t = e.target;
-      if(t.tagName !== 'IMG') return;
-      const src = t.getAttribute('data-full');
-      if(src) mainImage.src = src;
-      thumbs.querySelectorAll('img').forEach(i=>i.classList.remove('active'));
-      t.classList.add('active');
+function loadImages() {
+    document.getElementById('mainImage').src = images[0];
+    let th = document.getElementById('thumbnails');
+    images.forEach((img,i)=>{
+        let t=document.createElement("div");
+        t.className="thumbnail"+(i===0?" active":"");
+        t.innerHTML=`<img src="${img}" />`;
+        t.onclick=()=>setImage(i);
+        th.appendChild(t);
     });
+}
 
-    const viewsEl = document.getElementById('views');
-    let views = 1024;
-    setInterval(()=>{
-      views += Math.floor(Math.random()*5);
-      viewsEl.textContent = views.toLocaleString();
-    }, 3000);
-
-    const soldEl = document.getElementById('sold');
-    let sold = 12;
-    document.getElementById('addCart').addEventListener('click', ()=>{
-      sold++;
-      soldEl.textContent = sold;
-      showSocialProof();
+function setImage(i) {
+    currentImage = i;
+    document.getElementById('mainImage').src = images[i];
+    document.querySelectorAll('.thumbnail').forEach((e,idx)=>{
+        e.classList.toggle("active", idx===i);
     });
+}
 
-    const social = document.getElementById('social');
-    const spname = document.getElementById('spname');
-    const sptime = document.getElementById('sptime');
-    const names = ['Aman','Priya','Rakesh','Shreya','Ankit','Neha','Vikram','Sonal'];
-    function showSocialProof(){
-      const nm = names[Math.floor(Math.random()*names.length)];
-      spname.textContent = nm;
-      const mins = Math.floor(Math.random()*10)+1;
-      sptime.textContent = mins + ' min';
-      social.classList.add('show');
-      setTimeout(()=>social.classList.remove('show'),4000);
-    }
-    setTimeout(showSocialProof,2500);
-    setInterval(showSocialProof,15000);
+function nextImage(){ currentImage=(currentImage+1)%images.length; setImage(currentImage); }
+function prevImage(){ currentImage=(currentImage-1+images.length)%images.length; setImage(currentImage); }
 
-    const v1Btn = document.getElementById('v1Btn');
-    const v2Btn = document.getElementById('v2Btn');
-    v1Btn.addEventListener('click', ()=>{ document.body.classList.remove('v2'); });
-    v2Btn.addEventListener('click', ()=>{ document.body.classList.add('v2'); });
-
-    document.querySelectorAll('.size-btn').forEach(b=>{
-      b.addEventListener('click', ()=> {
-        document.querySelectorAll('.size-btn').forEach(x=>x.classList.remove('selected'));
-        b.classList.toggle('selected');
-        b.style.borderColor = 'var(--accent)';
-        b.style.background='rgba(15,110,244,0.06)';
-      });
+function loadSizes(){
+    let sg=document.getElementById("sizeGrid");
+    sizes.forEach(s=>{
+        let b=document.createElement("button");
+        b.className="size-btn";
+        b.innerText=s;
+        b.onclick=function(){
+            document.querySelectorAll(".size-btn").forEach(btn=>btn.classList.remove("active"));
+            b.classList.add("active");
+        };
+        sg.appendChild(b);
     });
-  </script>
+}
+
+function updateQty(val){
+    qty=Math.max(1, qty+val);
+    document.getElementById("qtyText").innerText=qty;
+}
+
+// Tabs
+function switchTab(i){
+    document.querySelectorAll(".tab-btn").forEach((b,idx)=>b.classList.toggle("active",idx===i))
+    document.querySelectorAll(".tab-content").forEach((c,idx)=>c.classList.toggle("active",idx===i))
+}
+
+// Theme toggle
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",document.body.classList.contains("dark")?"dark":"light");
+    document.querySelector(".theme-toggle").textContent =
+        document.body.classList.contains("dark") ? "☀️" : "🌙";
+}
+
+function setThemeFromLocal(){
+    if(localStorage.getItem("theme")==="dark"){ document.body.classList.add("dark"); }
+    document.querySelector(".theme-toggle").textContent =
+        document.body.classList.contains("dark") ? "☀️" : "🌙";
+}
+</script>
+
 </body>
 </html>
