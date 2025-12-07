@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Product</title>
+  <style>
+    :root{
+      --bg: #f5f6f8;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0f6ef4;
+      --accent-2:#f97316;
+      --radius:12px;
+      --shadow: 0 6px 18px rgba(20,20,40,0.08);
+      --glass: rgba(255,255,255,0.6);
+    }
+    body.v2 { --bg:#0b1220; --card:#0f1724; --muted:#9ca3af; --accent:#06b6d4; --accent-2:#fb7185; color:#e6eef8; --glass: rgba(255,255,255,0.04); }
+    *{box-sizing:border-box}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0; background:var(--bg); color: #0b1220; -webkit-font-smoothing:antialiased;
+      padding:28px;
+    }
+    body.v2 { color: #e6eef8 }
+
+    .container{
+      max-width:1100px; margin:0 auto; display:grid; grid-template-columns: 1fr 420px; gap:28px;
+    }
+
+    .card{
+      background:var(--card); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);
+    }
+
+    .topbar{ display:flex; justify-content:space-between; gap:12px; margin-bottom:14px; align-items:center; }
+    .variant-toggle{ display:flex; gap:8px; align-items:center;}
+    .variant-toggle button{ background:transparent; border:1px solid rgba(0,0,0,0.06); padding:8px 12px; border-radius:10px; cursor:pointer; }
+    body.v2 .variant-toggle button{ border-color: rgba(255,255,255,0.06) }
+
+    .counters{ display:flex; gap:10px; align-items:center; }
+    .counter{ background:var(--glass); padding:8px 10px; border-radius:10px; font-weight:600; font-size:14px; color:var(--muted) }
+    body.v2 .counter{ color:var(--muted) }
+
+    .gallery { display:grid; grid-template-columns:200px 1fr; gap:16px; align-items:start; }
+    .thumbs{ display:flex; flex-direction:column; gap:10px; }
+    .thumbs img{ width:64px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:transform .15s, border-color .15s; }
+    .thumbs img.active{ border-color:var(--accent); transform:scale(1.03) }
+    .main-img{ border-radius:10px; overflow:hidden; box-shadow: 0 8px 20px rgba(15,20,30,0.08); }
+    .main-img img{ width:100%; height:100%; object-fit:cover; display:block; max-height:420px }
+
+    .details h1{ margin:0 0 8px 0; font-size:22px }
+    .price-row{ display:flex; gap:12px; align-items:center; margin:10px 0; }
+    .price{ font-size:20px; font-weight:700; color:var(--accent) }
+    .old-price{ text-decoration:line-through; color:var(--muted); font-weight:600; }
+    .actions{ display:flex; gap:12px; margin-top:12px; }
+    .btn{ padding:12px 16px; border-radius:12px; border:0; cursor:pointer; font-weight:700; }
+    .btn.primary{ background:linear-gradient(90deg,var(--accent), var(--accent-2)); color:white; box-shadow:0 8px 18px rgba(15,110,244,0.14) }
+    .btn.ghost{ background:transparent; border:1px solid rgba(0,0,0,0.07); color:var(--muted) }
+    body.v2 .btn.ghost{ border-color: rgba(255,255,255,0.06); color:var(--muted) }
+
+    .meta{ display:flex; gap:12px; margin-top:14px; color:var(--muted); font-size:14px; align-items:center }
+    .badge{ background:rgba(15,110,244,0.08); color:var(--accent); padding:6px 8px; border-radius:8px; font-weight:700 }
+    body.v2 .badge{ background: rgba(6,182,212,0.08) }
+
+    .reviews{ margin-top:18px; display:flex; gap:18px; flex-wrap:wrap; }
+    .stars{ color:goldenrod; font-weight:700 }
+    .review-list{ margin-top:10px; display:grid; gap:10px }
+    .review{ background:linear-gradient(180deg, rgba(0,0,0,0.01), transparent); padding:10px; border-radius:10px; color:var(--muted) }
+
+    .social-proof{ position:fixed; right:20px; bottom:20px; background:var(--card); padding:12px 14px; border-radius:12px; box-shadow:var(--shadow); display:flex; gap:12px; align-items:center; opacity:0; transform:translateY(12px); transition:all .35s; z-index:60 }
+    .social-proof.show{ opacity:1; transform:translateY(0) }
+    .social-proof img{ width:42px; height:42px; border-radius:8px; object-fit:cover }
+    .social-proof .txt{ font-size:13px; color:var(--muted) }
+
+    @media (max-width:980px){
+      .container{ grid-template-columns: 1fr; }
+      .gallery{ grid-template-columns: 1fr; }
+      .thumbs{ flex-direction:row; order:2; overflow:auto }
+      .thumbs img{ width:54px; height:54px }
+    }
+    body.v2 .card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) }
+    .variant-indicator{ font-size:12px; color:var(--muted) }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="variant-toggle card" style="display:flex;align-items:center;padding:8px 12px;">
+      <div style="margin-right:12px;font-weight:700">Design Variation</div>
+      <button id="v1Btn">Variation 1</button>
+      <button id="v2Btn">Variation 2</button>
+      <div style="width:10px"></div>
+      <div class="variant-indicator">Toggle to see alternate layout/colors</div>
+    </div>
+
+    <div class="counters">
+      <div class="counter card">Live views: <span id="views">1,024</span></div>
+      <div class="counter card">Sold: <span id="sold">12</span></div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="card">
+      <div class="gallery">
+        <div class="thumbs" id="thumbs">
+          <img data-full="https://picsum.photos/id/1011/800/800" src="https://picsum.photos/id/1011/200/200" class="active" alt="thumb1">
+          <img data-full="https://picsum.photos/id/1005/800/800" src="https://picsum.photos/id/1005/200/200" alt="thumb2">
+          <img data-full="https://picsum.photos/id/1044/800/800" src="https://picsum.photos/id/1044/200/200" alt="thumb3">
+          <img data-full="https://picsum.photos/id/1033/800/800" src="https://picsum.photos/id/1033/200/200" alt="thumb4">
+        </div>
+
+        <div>
+          <div class="main-img">
+            <img id="mainImage" src="https://picsum.photos/id/1011/800/800" alt="Product main">
+          </div>
+
+          <div class="details" style="margin-top:12px;">
+            <h1 id="title">DMD Clothing — Lycra Cotton Stretchable Formal Trouser (Charcoal Black)</h1>
+            <div class="price-row">
+              <div class="price">₹799</div>
+              <div class="old-price">₹1,299</div>
+              <div style="color:var(--muted);font-weight:600">| Free delivery</div>
+            </div>
+
+            <div class="meta">
+              <div class="badge">Best Seller</div>
+              <div>Sizes: <strong>M, L, XL</strong></div>
+              <div>Return: 7 days</div>
+            </div>
+
+            <div class="actions">
+              <button id="addCart" class="btn primary">Add to Cart</button>
+              <button id="buyNow" class="btn ghost">Buy Now</button>
+            </div>
+
+            <div class="reviews">
+              <div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div class="stars" id="avgStars">★★★★☆</div>
+                  <div style="font-weight:700">4.2</div>
+                  <div style="color:var(--muted)"> (238 reviews)</div>
+                </div>
+
+                <div class="review-list" id="reviews">
+                  <div class="review"><strong>Ramesh</strong> — Comfortable fit, good stretch.</div>
+                  <div class="review"><strong>Sneha</strong> — Color same as shown, fabric quality okay.</div>
+                </div>
+              </div>
+
+              <div style="margin-left:auto;color:var(--muted);font-size:13px">
+                <div style="font-weight:700;margin-bottom:6px">Share</div>
+                <div style="display:flex;gap:8px">
+                  <button class="btn ghost">Whatsapp</button>
+                  <button class="btn ghost">X</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <aside class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;color:var(--muted)">Seller</div>
+          <div style="font-weight:800">DMD Clothing Pvt. Ltd.</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:var(--muted)">Dispatch in</div>
+          <div style="font-weight:700">2 days</div>
+        </div>
+      </div>
+
+      <hr style="margin:12px 0;border:none;border-top:1px solid rgba(0,0,0,0.06)">
+
+      <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+        <div><strong>Size</strong></div>
+        <div style="color:var(--muted)">Select</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn ghost size-btn">S</button>
+        <button class="btn ghost size-btn">M</button>
+        <button class="btn ghost size-btn">L</button>
+        <button class="btn ghost size-btn">XL</button>
+      </div>
+
+      <hr style="margin:12px 0;border:none;border-top:1px solid rgba(0,0,0,0.06)">
+
+      <div style="font-weight:700;margin-bottom:8px">Product highlights</div>
+      <ul style="color:var(--muted);line-height:1.6">
+        <li>Stretchable lycra blend</li>
+        <li>Regular fit — office wear</li>
+        <li>Machine washable</li>
+      </ul>
+
+      <div style="margin-top:12px">
+        <div style="font-weight:700;margin-bottom:8px">Customers also bought</div>
+        <div style="display:flex;gap:10px">
+          <img src="https://picsum.photos/id/1027/80/80" style="width:80px;height:80px;border-radius:8px;object-fit:cover">
+          <img src="https://picsum.photos/id/1035/80/80" style="width:80px;height:80px;border-radius:8px;object-fit:cover">
+          <img src="https://picsum.photos/id/1062/80/80" style="width:80px;height:80px;border-radius:8px;object-fit:cover">
+        </div>
+      </div>
+
+      <div style="margin-top:12px;font-size:13px;color:var(--muted)">
+        <div style="font-weight:700">Return & Warranty</div>
+        7 days return | 3 months stitching warranty
+      </div>
+    </aside>
+  </main>
+
+  <div class="social-proof" id="social">
+    <img src="https://picsum.photos/id/1012/80/80" alt="user">
+    <div class="txt"><strong id="spname">Aman</strong> just purchased this — <span id="sptime">2 min</span> ago</div>
+  </div>
+
+  <script>
+    const thumbs = document.getElementById('thumbs');
+    const mainImage = document.getElementById('mainImage');
+    thumbs.addEventListener('click', e=>{
+      const t = e.target;
+      if(t.tagName !== 'IMG') return;
+      const src = t.getAttribute('data-full');
+      if(src) mainImage.src = src;
+      thumbs.querySelectorAll('img').forEach(i=>i.classList.remove('active'));
+      t.classList.add('active');
+    });
+
+    const viewsEl = document.getElementById('views');
+    let views = 1024;
+    setInterval(()=>{
+      views += Math.floor(Math.random()*5);
+      viewsEl.textContent = views.toLocaleString();
+    }, 3000);
+
+    const soldEl = document.getElementById('sold');
+    let sold = 12;
+    document.getElementById('addCart').addEventListener('click', ()=>{
+      sold++;
+      soldEl.textContent = sold;
+      showSocialProof();
+    });
+
+    const social = document.getElementById('social');
+    const spname = document.getElementById('spname');
+    const sptime = document.getElementById('sptime');
+    const names = ['Aman','Priya','Rakesh','Shreya','Ankit','Neha','Vikram','Sonal'];
+    function showSocialProof(){
+      const nm = names[Math.floor(Math.random()*names.length)];
+      spname.textContent = nm;
+      const mins = Math.floor(Math.random()*10)+1;
+      sptime.textContent = mins + ' min';
+      social.classList.add('show');
+      setTimeout(()=>social.classList.remove('show'),4000);
+    }
+    setTimeout(showSocialProof,2500);
+    setInterval(showSocialProof,15000);
+
+    const v1Btn = document.getElementById('v1Btn');
+    const v2Btn = document.getElementById('v2Btn');
+    v1Btn.addEventListener('click', ()=>{ document.body.classList.remove('v2'); });
+    v2Btn.addEventListener('click', ()=>{ document.body.classList.add('v2'); });
+
+    document.querySelectorAll('.size-btn').forEach(b=>{
+      b.addEventListener('click', ()=> {
+        document.querySelectorAll('.size-btn').forEach(x=>x.classList.remove('selected'));
+        b.classList.toggle('selected');
+        b.style.borderColor = 'var(--accent)';
+        b.style.background='rgba(15,110,244,0.06)';
+      });
+    });
+  </script>
+</body>
+</html>
